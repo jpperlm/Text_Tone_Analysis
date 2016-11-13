@@ -4,12 +4,11 @@
   "version": "1.0",
 
   "description": "Sends email text to microsoft cognitive text analyzer API and displays real time feedback of the tone",
-  "app": {
-    "background": {
-      "scripts": ["background.js"]
-    },
-  "permissions": [
-   "activeTab",
-   "https://ajax.googleapis.com/"
- ]
+  "permissions": ["tabs", "*://*.mail.google.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.mail.google.com/*"],
+      "js": ["jquery-3.1.1.min.js", "background.js"]
+    }
+  ]
 }
