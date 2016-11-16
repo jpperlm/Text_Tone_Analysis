@@ -1,12 +1,31 @@
 chrome.browserAction.onClicked.addListener(function(tab) {
   console.log('Extension Clicked')
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {clicked: true}, function(response) {
-      makeCall(response['text'], response['parentNode']);
+      ensureSendMessage(tabs[0].id, {greeting: "hello"});
     });
   });
-;
-});
+
+
+function ensureSendMessage(tabId, message, callback){
+  chrome.tabs.sendMessage(tabId, {ping: true}, function(response){
+    if(response) { // Content script ready
+      chrome.tabs.sendMessage(tabId, message, function(response){
+        makeCall(response['text'], response['parentNode']);
+      });
+    } else { // No listener on the other end
+      chrome.tabs.executeScript(tabId, {file: "application.js"}, function(){
+        if(chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError);
+          throw Error("Unable to inject script into tab " + tabId);
+        }
+        // OK, now it's injected and ready
+        chrome.tabs.sendMessage(tabId, message, function(response){
+          makeCall(response['text'], response['parentNode']);
+        });
+      });
+    }
+  });
+};
 
 
 function makeCall(text, parent){
@@ -54,6 +73,6 @@ function makeCall(text, parent){
       console.log(data)
   });
 
-  chrome.tabs.create(url:'response.html')
+  chrome.tabs.create({"url":'response.html'})
 
 }
