@@ -53,4 +53,7 @@ function makeCall(text, parent){
       //array of strings
       console.log(data)
   });
+
+  chrome.tabs.create(url:'response.html')
+
 }
