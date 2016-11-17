@@ -3,7 +3,7 @@
    "manifest_version": 2,
 
    "name": "Text analytics",
-   "description": "a",
+   "description": "Analyze Text",
    "version": "1.0",
 
    "permissions": [

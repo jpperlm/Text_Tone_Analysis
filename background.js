@@ -78,7 +78,7 @@ function makeCall(text, parent){
   });
   function waitForElement(){
       if(sentiment_object && keyPhrases_object){
-        var message = {sentiment: sentiment_object, keyPhrases: keyPhrases_object};
+        var message = {sentiment: sentiment_object, keyPhrases: keyPhrases_object, text: textToAnalyze};
         createPage(message);
       }
       else{
