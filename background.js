@@ -37,6 +37,8 @@ function makeCall(text, parent){
      "id": "1",
      "text": textToAnalyze
     }]};
+  var sentiment_object;
+  var keyPhrases_object;
   $.ajax({
     url: "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment?" + $.param( params ),
     beforeSend: function(xhrObj){
@@ -52,6 +54,7 @@ function makeCall(text, parent){
     .done(function(data) {
       //sentiment data being returned here
       //num from 0-1
+      sentiment_object = data;
       console.log(data);
 
   });
@@ -70,9 +73,36 @@ function makeCall(text, parent){
     .done(function(data) {
       //key phrase data being returned here
       //array of strings
+      keyPhrases_object = data;
       console.log(data)
   });
+  function waitForElement(){
+      if(sentiment_object && keyPhrases_object){
+        var message = {sentiment: sentiment_object, keyPhrases: keyPhrases_object};
+        createPage(message);
+      }
+      else{
+          setTimeout(function(){
+              waitForElement();
+          },500);
+      }
+  }
+  waitForElement();
+}
 
-  chrome.tabs.create({"url":'response.html'})
 
+
+function createPage(params)
+{
+  //Create New Chrome Tab
+  chrome.tabs.create({"url": chrome.extension.getURL('response.html')}, function(tab){
+    //Wait for tab to be fully loaded before doing anything
+    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+      if (changeInfo.status == 'complete') {
+          chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+            chrome.tabs.sendMessage(tab.id, params)
+          })
+        }
+      })
+    })
 }
