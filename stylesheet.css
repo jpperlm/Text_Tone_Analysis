@@ -5,7 +5,7 @@ body{
 h1{
   font-family: times, Times New Roman, times-roman, georgia, serif;
   margin: 0 auto;
-  width:1000px;
+  width:1400px;
   text-align: center;
   margin-bottom: 30px;
 
@@ -13,16 +13,21 @@ h1{
 #container{
   margin: 0 auto;
   width:1000px;
+
+  font-size: 1.5em;
+  font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+  margin-bottom: 120px;
+  margin-top: 30px;
+}
+.columns{
+  width:1400px;
   column-count: 2;
   column-rule: 1px dotted black;
   column-fill: auto;
-  font-size: 1.5em;
-  max-height:2000px;
-  font-family: Futura, "Trebuchet MS", Arial, sans-serif;
 }
 #barContainer{
   margin: 0 auto;
-  width:1000px;
+  width:800px;
 }
 bolded{
   font-weight: bolder;

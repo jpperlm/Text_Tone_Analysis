@@ -9,7 +9,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 
 function doStuff(data){
-
+  console.log(data)
   var keyPhrases = data.keyPhrases.documents[0].keyPhrases;
   var text = data.text;
   for(var i=0;i<keyPhrases.length;i++)
@@ -45,4 +45,8 @@ function doStuff(data){
       <div class="determinate '+barColor+'" style="width:'+ percent + '%"></div>\
   </div>')
   $('#barContainer').html(x);
+  if ($('#container').height() >= 500)
+  {
+    $('#container').addClass('columns')
+  }
 }

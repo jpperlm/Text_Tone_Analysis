@@ -20,7 +20,7 @@ function ensureSendMessage(tabId, message, callback){
         }
         // OK, now it's injected and ready
         chrome.tabs.sendMessage(tabId, message, function(response){
-          makeCall(response['text'], response['parentNode']);
+          makeCall(response['text'], response['parentNode'], response['textHTML']);
         });
       });
     }
@@ -28,14 +28,15 @@ function ensureSendMessage(tabId, message, callback){
 };
 
 
-function makeCall(text, parent){
-  var textToAnalyze = text;
+function makeCall(text, parent, textHTML){
+  var plainText = text;
   var parentNode = parent;
+  var textHTML = textHTML;
   var params ={
     "documents": [{
     "language": "en",
      "id": "1",
-     "text": textToAnalyze
+     "text": plainText
     }]};
   var sentiment_object;
   var keyPhrases_object;
@@ -74,11 +75,11 @@ function makeCall(text, parent){
       //key phrase data being returned here
       //array of strings
       keyPhrases_object = data;
-      console.log(data)
+      console.log(data);
   });
   function waitForElement(){
       if(sentiment_object && keyPhrases_object){
-        var message = {sentiment: sentiment_object, keyPhrases: keyPhrases_object, text: textToAnalyze};
+        var message = {sentiment: sentiment_object, keyPhrases: keyPhrases_object, text: plainText, textHTML: textHTML};
         createPage(message);
       }
       else{
