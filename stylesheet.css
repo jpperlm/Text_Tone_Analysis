@@ -1,7 +1,49 @@
+body{
+  background-color: #DFE2DB;
+
+}
+h1{
+  font-family: times, Times New Roman, times-roman, georgia, serif;
+  margin: 0 auto;
+  width:1000px;
+  text-align: center;
+  margin-bottom: 30px;
+
+}
 #container{
   margin: 0 auto;
-  width:60%;
+  width:1000px;
+  column-count: 2;
+  column-rule: 1px dotted black;
+  column-fill: auto;
+  font-size: 1.5em;
+  max-height:2000px;
+  font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+}
+#barContainer{
+  margin: 0 auto;
+  width:1000px;
 }
 bolded{
   font-weight: bolder;
+  color:black;
+  font-style: italic;
+}
+.progress{
+  background-color: darkgrey;
+  height:30px;
+  text-align: center;
+  font-size: 2em;
+  z-index: 0;
+}
+.determinate{
+  z-index: -1
+}
+.barLabel
+{
+    height:30px;
+    text-align: center;
+    vertical-align: center;
+    font-size: 1em;
+    z-index: 5;
 }
