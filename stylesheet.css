@@ -27,10 +27,10 @@ h1{
 }
 #barContainer{
   margin: 0 auto;
-  width:800px;
+  width:500px;
 }
 bolded{
-  font-weight: bolder;
+  font-weight: 600;
   color:black;
   font-style: italic;
 }

@@ -10,7 +10,12 @@ function ensureSendMessage(tabId, message, callback){
   chrome.tabs.sendMessage(tabId, {ping: true}, function(response){
     if(response) { // Content script ready
       chrome.tabs.sendMessage(tabId, message, function(response){
-        makeCall(response['text'], response['parentNode']);
+        if(response["error"]==""){
+          makeCall(response['text'], response['parentNode'], response['textHTML']);
+        }
+        else {
+          alert("Selected text was too long. Please make a smaller selection.")
+        }
       });
     } else { // No listener on the other end
       chrome.tabs.executeScript(tabId, {file: "application.js"}, function(){
@@ -20,7 +25,12 @@ function ensureSendMessage(tabId, message, callback){
         }
         // OK, now it's injected and ready
         chrome.tabs.sendMessage(tabId, message, function(response){
-          makeCall(response['text'], response['parentNode'], response['textHTML']);
+          if(response["error"]==""){
+            makeCall(response['text'], response['parentNode'], response['textHTML']);
+          }
+          else {
+            alert("Selected text was too long. Please make a smaller selection.")
+          }
         });
       });
     }
@@ -80,7 +90,18 @@ function makeCall(text, parent, textHTML){
   function waitForElement(){
       if(sentiment_object && keyPhrases_object){
         var message = {sentiment: sentiment_object, keyPhrases: keyPhrases_object, text: plainText, textHTML: textHTML};
+        // sends code to create new chrome tab with all information compiled
+
         createPage(message);
+
+        //If i want to update dom on page, do i have to send code back to application.js or can i do it from here?
+
+        //Send final RESPONSE back to application.js
+        // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          //   injectOriginalPage(tabs[0].id, message);
+          // });
+
+
       }
       else{
           setTimeout(function(){
@@ -90,13 +111,29 @@ function makeCall(text, parent, textHTML){
   }
   waitForElement();
 }
-
+// function injectOriginalPage(tabId, message){
+//   message['textHTML']= parseHTML(message);
+//   chrome.tabs.sendMessage(tabId, message, function(response){
+//
+//   });
+// }
+//
+// function parseHTML(data){
+//   var keyPhrases = data.keyPhrases.documents[0].keyPhrases;
+//   var textHTML = data.textHTML;
+//   for(var i=0;i<keyPhrases.length;i++)
+//   {
+//     var replacementText='<bolded>'.concat(keyPhrases[i]).concat('</bolded>');
+//     textHTML.replace(/(keyPhrases[i])(?![^<]*>|[^<>]*<\/)/, replacementText);
+//   }
+//   return textHTML;
+// }
 
 
 function createPage(params)
 {
   //Create New Chrome Tab
-  chrome.tabs.create({"url": chrome.extension.getURL('response.html')}, function(tab){
+  chrome.tabs.create({"url": 'response.html'}, function(tab){
     //Wait for tab to be fully loaded before doing anything
     chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
       if (changeInfo.status == 'complete') {

@@ -12,11 +12,19 @@ function doStuff(data){
   console.log(data)
   var keyPhrases = data.keyPhrases.documents[0].keyPhrases;
   var text = data.text;
+  var textHTML = data.textHTML;
   for(var i=0;i<keyPhrases.length;i++)
   {
     var replacementText='<bolded>'.concat(keyPhrases[i]).concat('</bolded>');
     text = text.replace(keyPhrases[i], replacementText);
+
+    textHTML.replace(/(keyPhrases[i])(?![^<]*>|[^<>]*<\/)/, replacementText);
+
   }
+  console.log(data.sentiment.documents[0].score*100)
+
+
+
   $('#container').html(text);
   colorObjectLiteral={
     25:"Red",
@@ -32,7 +40,7 @@ function doStuff(data){
       barTitle="Negative Sentiment";
     }
     else if (percent>25 && percent<75) {
-      barColor="grey"
+      barColor="blue"
       barTitle="Neutral Sentiment";
     }
     else{
