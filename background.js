@@ -1,3 +1,8 @@
+function getApiKey()
+{
+  return "YOUR API KEY HERE"
+}
+
 chrome.browserAction.onClicked.addListener(function(tab) {
   console.log('Extension Clicked')
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -128,6 +133,7 @@ function makeCall(text, parent, textHTML){
 //   }
 //   return textHTML;
 // }
+
 
 
 function createPage(params)
