@@ -1,8 +1,11 @@
+// Function to insert API key into code.
 function getApiKey()
 {
   return "YOUR API KEY HERE"
 }
 
+// Listener
+//When the Chrome Extension icon is pressed.
 chrome.browserAction.onClicked.addListener(function(tab) {
   console.log('Extension Clicked')
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -10,7 +13,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     });
   });
 
-
+//Sometimes the button may be pressed however application.js script is not ready or already injected into the tab. Therefore here we ping between files to see if everything is ready to send data.
 function ensureSendMessage(tabId, message, callback){
   chrome.tabs.sendMessage(tabId, {ping: true}, function(response){
     if(response) { // Content script ready
@@ -42,7 +45,7 @@ function ensureSendMessage(tabId, message, callback){
   });
 };
 
-
+//Function that takes the text and formats it and sends off for the AJAX request to microsoft cognitive text API
 function makeCall(text, parent, textHTML){
   var plainText = text;
   var parentNode = parent;
@@ -96,17 +99,7 @@ function makeCall(text, parent, textHTML){
       if(sentiment_object && keyPhrases_object){
         var message = {sentiment: sentiment_object, keyPhrases: keyPhrases_object, text: plainText, textHTML: textHTML};
         // sends code to create new chrome tab with all information compiled
-
         createPage(message);
-
-        //If i want to update dom on page, do i have to send code back to application.js or can i do it from here?
-
-        //Send final RESPONSE back to application.js
-        // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-          //   injectOriginalPage(tabs[0].id, message);
-          // });
-
-
       }
       else{
           setTimeout(function(){
@@ -116,25 +109,6 @@ function makeCall(text, parent, textHTML){
   }
   waitForElement();
 }
-// function injectOriginalPage(tabId, message){
-//   message['textHTML']= parseHTML(message);
-//   chrome.tabs.sendMessage(tabId, message, function(response){
-//
-//   });
-// }
-//
-// function parseHTML(data){
-//   var keyPhrases = data.keyPhrases.documents[0].keyPhrases;
-//   var textHTML = data.textHTML;
-//   for(var i=0;i<keyPhrases.length;i++)
-//   {
-//     var replacementText='<bolded>'.concat(keyPhrases[i]).concat('</bolded>');
-//     textHTML.replace(/(keyPhrases[i])(?![^<]*>|[^<>]*<\/)/, replacementText);
-//   }
-//   return textHTML;
-// }
-
-
 
 function createPage(params)
 {
