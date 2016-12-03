@@ -55,7 +55,7 @@ function makeCall(text, parent, textHTML){
     beforeSend: function(xhrObj){
     // Request headers
     xhrObj.setRequestHeader("Content-Type","application/json");
-    xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","98606b9680ac40d19fc4e4e6d0746715");
+    xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key",getApiKey());
     xhrObj.setRequestHeader("Accept","application/json");
     },
     type: "POST",
