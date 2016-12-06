@@ -1,16 +1,27 @@
 // Function to insert API key into code.
 function getApiKey()
 {
-  return "YOUR API KEY HERE"
+  return chrome.storage.sync.get("MicrosoftAPIKey")
 }
 
 // Listener
 //When the Chrome Extension icon is pressed.
 chrome.browserAction.onClicked.addListener(function(tab) {
   console.log('Extension Clicked')
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      ensureSendMessage(tabs[0].id, {greeting: "hello"});
-    });
+  chrome.storage.sync.get("MicrosoftAPIKey", function(apiKey){
+    if(jQuery.isEmptyObject(apiKey)){
+      var newKey = window.prompt('Please Enter Valid API key');
+      chrome.storage.sync.set({"MicrosoftAPIKey":newKey})
+    }
+
+    else{
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          ensureSendMessage(tabs[0].id, {greeting: "hello"});
+        });
+      }
+
+  })
+
   });
 
 //Sometimes the button may be pressed however application.js script is not ready or already injected into the tab. Therefore here we ping between files to see if everything is ready to send data.
