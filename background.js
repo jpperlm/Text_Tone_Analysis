@@ -1,36 +1,59 @@
 // Function to insert API key into code.
-function getApiKey()
-{
-  return chrome.storage.sync.get("MicrosoftAPIKey")
-}
+
 
 // Listener
 //When the Chrome Extension icon is pressed.
 chrome.browserAction.onClicked.addListener(function(tab) {
-  console.log('Extension Clicked')
   chrome.storage.sync.get("MicrosoftAPIKey", function(apiKey){
-    if(jQuery.isEmptyObject(apiKey)){
-      var newKey = window.prompt('Please Enter Valid API key');
-      chrome.storage.sync.set({"MicrosoftAPIKey":newKey})
-    }
-
-    else{
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-          ensureSendMessage(tabs[0].id, {greeting: "hello"});
-        });
+     newKey = ''
+      if(apiKey.MicrosoftAPIKey===null){
+        var newKey = window.prompt('Please Enter Valid Microsoft Text Analyitics API Key: (https://www.microsoft.com/cognitive-services)');
+        if (newKey != '')
+        {
+          chrome.storage.sync.set({"MicrosoftAPIKey":newKey})
+        }
+      }
+      else{
+        newKey = apiKey["MicrosoftAPIKey"];
       }
 
-  })
+      //THIS IS TO CHECK IF THE KEY IS VALID. HERE WE SIMPLY RUN AN AJAX CALL AND IF WE GET A RESPONSE WE KNOW THE KEY WORKS. IF NOT WE PROMPT FOR ANOTHER KEY.
+      var params ={
+        "documents": [{
+        "language": "en",
+         "id": "1",
+         "text": "Test text to see if key works"
+        }]};
+      $.ajax({
+        url: "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment?" + $.param( params ),
+        beforeSend: function(xhrObj){
+        xhrObj.setRequestHeader("Content-Type","application/json");
+        xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key",newKey);
+        xhrObj.setRequestHeader("Accept","application/json");
+        },
+        type: "POST",
+        data: JSON.stringify(params)
+        })
+        .done(function(data) {
+          chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+              ensureSendMessage(tabs[0].id, {greeting: "hello"}, newKey);
+            })
+        }).fail(function(a,b,c){
+          var newKey = window.prompt('Please Enter Valid TEXT-ANALYTICS API key (obtained at https://www.microsoft.com/cognitive-services)');
+          chrome.storage.sync.set({"MicrosoftAPIKey":newKey})
+
+      })
 
   });
+})
 
 //Sometimes the button may be pressed however application.js script is not ready or already injected into the tab. Therefore here we ping between files to see if everything is ready to send data.
-function ensureSendMessage(tabId, message, callback){
+function ensureSendMessage(tabId, message, newKey, callback){
   chrome.tabs.sendMessage(tabId, {ping: true}, function(response){
     if(response) { // Content script ready
       chrome.tabs.sendMessage(tabId, message, function(response){
         if(response["error"]==""){
-          makeCall(response['text'], response['parentNode'], response['textHTML']);
+          makeCall(response['text'], response['parentNode'], response['textHTML'], newKey);
         }
         else {
           alert("Selected text was too long. Please make a smaller selection.")
@@ -45,7 +68,7 @@ function ensureSendMessage(tabId, message, callback){
         // OK, now it's injected and ready
         chrome.tabs.sendMessage(tabId, message, function(response){
           if(response["error"]==""){
-            makeCall(response['text'], response['parentNode'], response['textHTML']);
+            makeCall(response['text'], response['parentNode'], response['textHTML'], newKey);
           }
           else {
             alert("Selected text was too long. Please make a smaller selection.")
@@ -57,7 +80,7 @@ function ensureSendMessage(tabId, message, callback){
 };
 
 //Function that takes the text and formats it and sends off for the AJAX request to microsoft cognitive text API
-function makeCall(text, parent, textHTML){
+function makeCall(text, parent, textHTML, newKey){
   var plainText = text;
   var parentNode = parent;
   var textHTML = textHTML;
@@ -74,7 +97,7 @@ function makeCall(text, parent, textHTML){
     beforeSend: function(xhrObj){
     // Request headers
     xhrObj.setRequestHeader("Content-Type","application/json");
-    xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key",getApiKey());
+    xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key",newKey);
     xhrObj.setRequestHeader("Accept","application/json");
     },
     type: "POST",
@@ -93,7 +116,7 @@ function makeCall(text, parent, textHTML){
     beforeSend: function(xhrObj){
     // Request headers
     xhrObj.setRequestHeader("Content-Type","application/json");
-    xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key",getApiKey());
+    xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key",newKey);
     xhrObj.setRequestHeader("Accept","application/json");
     },
     type: "POST",
