@@ -1,7 +1,7 @@
 // Function to insert API key into code.
 function getApiKey()
 {
-  return "YOUR API KEY HERE"
+  return "eec46607ab4048fd8669d09ba183227d"
 }
 
 // Listener

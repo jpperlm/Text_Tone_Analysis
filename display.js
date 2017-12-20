@@ -15,7 +15,7 @@ function doStuff(data){
   var textHTML = data.textHTML;
   for(var i=0;i<keyPhrases.length;i++)
   {
-    var replacementText='<bolded>'.concat(keyPhrases[i]).concat('</bolded>');
+    var replacementText='<bolded><font color="red"?>'.concat(keyPhrases[i]).concat('</font></bolded>');
     text = text.replace(keyPhrases[i], replacementText);
 
     textHTML.replace(/(keyPhrases[i])(?![^<]*>|[^<>]*<\/)/, replacementText);
