@@ -16,4 +16,4 @@ Technologies Used: Javascript, Chrome Extensions
 
 ### Example:
 
-![Example Of Use](example.gif)
+![Example Of Use](https://user-images.githubusercontent.com/12966977/47436604-ccfb4e80-d774-11e8-8ad4-0ee7a03c6c2f.gif)
